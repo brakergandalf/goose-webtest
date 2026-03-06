@@ -1,0 +1,139 @@
+version: "1.0"
+name: "auto-discover"
+description: "Autonomously discover application structure, generate tests, and execute them — no test spec required"
+
+settings:
+  max_retries: 2
+  timeout_seconds: 300
+  screenshot_on_every_step: true
+
+nodes:
+  - id: launch
+    type: deterministic
+    name: "Launch Browser"
+    action:
+      type: LaunchBrowser
+
+  - id: login
+    type: deterministic
+    name: "Authenticate"
+    action:
+      type: Login
+
+  - id: discover
+    type: agentic
+    name: "Discover Application Structure"
+    prompt: |
+      You are exploring this web application for the first time. Your goal is to build a comprehensive map of the application.
+
+      INSTRUCTIONS:
+      1. Start by taking a browser_snapshot to see the current page
+      2. Identify all navigation links, menu items, and page sections
+      3. Visit each major section/page by clicking navigation links
+      4. On each page:
+         - Take a browser_snapshot to catalog the page content
+         - Note all forms (fields, labels, types, required flags)
+         - Note all interactive elements (buttons, dropdowns, tabs, modals)
+         - Note any data tables, lists, or content areas
+         - Use log_step to record what you find
+      5. Do NOT submit any forms or modify any data
+      6. Do NOT click logout or leave the application
+
+      After exploring all reachable pages, output a JSON summary of the application structure:
+      ```json
+      {
+        "title": "Application Name",
+        "pages": [
+          {
+            "path": "/dashboard",
+            "title": "Dashboard",
+            "forms": [{"purpose": "Search", "fields": [{"label": "Query", "field_type": "text", "required": false}]}],
+            "interactive_elements": ["Export button", "Date filter dropdown"],
+            "requires_auth": true
+          }
+        ],
+        "navigation": [
+          {"label": "Dashboard", "url": "/dashboard"},
+          {"label": "Transfers", "url": "/transfers"}
+        ]
+      }
+      ```
+
+      Be thorough — visit every navigation item. The JSON you output will be used to generate test scenarios.
+    max_turns: 20
+    timeout_seconds: 180
+
+  - id: generate_and_execute
+    type: agentic
+    name: "Generate and Execute Tests"
+    prompt: |
+      Based on the application structure discovered in the previous step, generate and execute test scenarios.
+
+      For each discovered page and form, create test cases:
+
+      **Navigation Tests:**
+      - Verify each page is accessible and loads correctly
+      - Check page titles and headings match expectations
+      - Verify breadcrumbs or navigation state
+
+      **Form Tests:**
+      - Verify all form fields are present and have correct types
+      - Check required field validation (submit empty form, check for errors)
+      - Verify form labels and placeholder text
+
+      **UI Element Tests:**
+      - Verify key interactive elements are visible and functional
+      - Check that data tables/lists have content
+      - Verify buttons are clickable
+
+      **Negative Tests:**
+      - Try invalid navigation (if applicable)
+      - Check error handling on forms
+
+      EXECUTION RULES:
+      1. Assign each test a sequential ID: TC-001, TC-002, etc.
+      2. Before each test, use log_step to announce: "TC-XXX: [description]"
+      3. Navigate to the relevant page
+      4. Use assert_visible, assert_text_contains, assert_element_exists to validate
+      5. Take browser_take_screenshot for visual evidence on key findings
+      6. After each test, use log_step with status "pass" or "fail"
+      7. Do NOT submit real forms or modify data — only verify structure
+      8. If a page is unreachable, log it as a failed test and continue
+
+      Execute ALL tests before producing your final summary. Aim for comprehensive coverage.
+    max_turns: 30
+    timeout_seconds: 300
+
+  - id: report
+    type: deterministic
+    name: "Generate Report"
+    action:
+      type: GenerateReport
+
+transitions:
+  - from: launch
+    to: login
+    condition: OnSuccess
+  - from: launch
+    to: report
+    condition: OnFailure
+
+  # Login success → discover
+  - from: login
+    to: discover
+    condition: OnSuccess
+  # Login failure → still discover (test public pages)
+  - from: login
+    to: discover
+    condition: OnFailure
+
+  - from: discover
+    to: generate_and_execute
+    condition: OnSuccess
+  - from: discover
+    to: report
+    condition: OnFailure
+
+  - from: generate_and_execute
+    to: report
+    condition: Always

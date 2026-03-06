@@ -1,0 +1,78 @@
+version: "1.0"
+name: "explore-and-report"
+description: "Login, explore the application, run test spec scenarios, and produce a report"
+
+settings:
+  max_retries: 3
+  timeout_seconds: 300
+  screenshot_on_every_step: true
+
+nodes:
+  - id: launch
+    type: deterministic
+    name: "Launch Browser"
+    action:
+      type: LaunchBrowser
+
+  - id: login
+    type: deterministic
+    name: "Authenticate"
+    action:
+      type: Login
+
+  - id: explore
+    type: agentic
+    name: "Explore Application"
+    prompt: |
+      You are now logged into the application. Explore the main navigation:
+      1. Identify all major sections/pages from the navigation menu
+      2. Visit each main section and take a screenshot
+      3. Note any interesting UI elements, forms, or interactive features
+      4. Build a mental map of the application structure
+      5. Log each page you visit with log_step
+      Do NOT submit any forms or modify any data.
+    max_turns: 15
+    timeout_seconds: 120
+
+  - id: execute_tests
+    type: agentic
+    name: "Execute Test Specification"
+    prompt: |
+      Now execute the test scenarios from the specification.
+      For each scenario:
+      1. Navigate to the relevant page
+      2. Perform the described actions
+      3. Use assert tools to validate expected outcomes
+      4. Take screenshots at each important step
+      5. Log pass/fail with log_step for each scenario
+    max_turns: 25
+    timeout_seconds: 180
+
+  - id: report
+    type: deterministic
+    name: "Generate Report"
+    action:
+      type: GenerateReport
+
+transitions:
+  - from: launch
+    to: login
+    condition: OnSuccess
+  - from: launch
+    to: report
+    condition: OnFailure
+  - from: login
+    to: explore
+    condition: OnSuccess
+  - from: login
+    to: report
+    condition: OnFailure
+  - from: explore
+    to: execute_tests
+    condition: OnSuccess
+  - from: explore
+    to: report
+    condition: OnFailure
+  - from: execute_tests
+    to: report
+    condition: Always

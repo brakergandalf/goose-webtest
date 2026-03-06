@@ -1,0 +1,117 @@
+version: "1.0"
+name: "performance-audit"
+description: "Login, measure page load performance across key pages, and report findings"
+
+settings:
+  max_retries: 2
+  timeout_seconds: 300
+  screenshot_on_every_step: true
+
+nodes:
+  - id: launch
+    type: deterministic
+    name: "Launch Browser"
+    action:
+      type: LaunchBrowser
+
+  - id: login
+    type: deterministic
+    name: "Authenticate"
+    action:
+      type: Login
+
+  - id: measure_dashboard
+    type: agentic
+    name: "Measure Dashboard Performance"
+    prompt: |
+      You are now logged in. Measure the performance of the main dashboard/landing page:
+
+      1. Take a browser_snapshot and note the current page URL and content size
+      2. Count the total number of interactive elements (buttons, links, inputs)
+      3. Check if the page has fully loaded (no loading spinners or skeleton screens)
+      4. Take a browser_take_screenshot for visual evidence
+      5. Note the page structure complexity (nesting depth, total elements)
+
+      Report findings as:
+      - Page URL
+      - Element count (links, buttons, inputs, images)
+      - Any loading indicators still visible
+      - PASS if page loaded cleanly, FAIL if errors or incomplete rendering
+    max_turns: 5
+    timeout_seconds: 60
+
+  - id: navigate_pages
+    type: agentic
+    name: "Measure Navigation Performance"
+    prompt: |
+      Navigate through the main sections of the application and measure each transition:
+
+      For each major navigation link/section you find:
+      1. Note the link text and target
+      2. Click to navigate
+      3. Immediately take a browser_snapshot to check if content loaded
+      4. Count elements on the new page
+      5. Check for any error messages or broken elements
+      6. Take a browser_take_screenshot
+
+      Visit at least 4-5 different sections. For each page report:
+      - Page name/URL
+      - Whether it loaded successfully
+      - Number of interactive elements
+      - Any errors, broken images, or missing content
+      - PASS/FAIL status
+
+      After visiting all pages, provide a summary table of results.
+    max_turns: 20
+    timeout_seconds: 180
+
+  - id: check_responsiveness
+    type: agentic
+    name: "Check UI Responsiveness"
+    prompt: |
+      Test the UI responsiveness of the application:
+
+      1. Find a form or interactive element (search, filter, dropdown)
+      2. Interact with it (type text, select option, click button)
+      3. Check if the UI responds immediately (take snapshot after each action)
+      4. Look for any elements that appear broken or misaligned
+      5. Check if all buttons and links have proper labels/text
+      6. Verify no JavaScript errors are visible in the page content
+      7. Take a final browser_take_screenshot
+
+      Report:
+      - Which interactive elements were tested
+      - Response behavior for each interaction
+      - Any UI issues found (broken layouts, missing text, unresponsive elements)
+      - PASS if UI is responsive and functional, FAIL if issues found
+    max_turns: 10
+    timeout_seconds: 90
+
+  - id: report
+    type: deterministic
+    name: "Generate Report"
+    action:
+      type: GenerateReport
+
+transitions:
+  - from: launch
+    to: login
+    condition: OnSuccess
+  - from: launch
+    to: report
+    condition: OnFailure
+  - from: login
+    to: measure_dashboard
+    condition: OnSuccess
+  - from: login
+    to: measure_dashboard
+    condition: OnFailure
+  - from: measure_dashboard
+    to: navigate_pages
+    condition: Always
+  - from: navigate_pages
+    to: check_responsiveness
+    condition: Always
+  - from: check_responsiveness
+    to: report
+    condition: Always

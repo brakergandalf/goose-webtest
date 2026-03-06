@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# gwt — goose-webtest wrapper
+# Provides clean environment, provider shortcuts, and bare-URL detection.
+#
+# Usage:
+#   gwt run https://example.com                        # auto-discover mode
+#   gwt run --target targets/sparkasse-demo.toml       # with target config
+#   gwt run --provider claude --headed https://x.com   # claude + visible browser
+#   gwt run --provider local --spec test-specs/s.md    # local vllm + spec
+
+set -euo pipefail
+
+# ── Environment ──────────────────────────────────────────────────────
+export CARGO_HOME="${CARGO_HOME:-$HOME/.cargo}"
+export RUSTUP_TOOLCHAIN=stable
+# Clean PATH: cargo, homebrew, system — skip conda, pyenv, etc.
+export PATH="$CARGO_HOME/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BINARY="$SCRIPT_DIR/target/debug/goose"
+
+if [[ ! -x "$BINARY" ]]; then
+    echo "Binary not found at $BINARY"
+    echo "Build first:  cargo build --features webtest -p goose-cli"
+    exit 1
+fi
+
+# ── Parse args ───────────────────────────────────────────────────────
+# Strip the leading "run" subcommand if present
+args=("$@")
+if [[ ${#args[@]} -gt 0 && "${args[0]}" == "run" ]]; then
+    args=("${args[@]:1}")
+fi
+
+# Provider shortcut mapping
+provider_map() {
+    case "$1" in
+        local|vllm|vllm_local) echo "vllm_local" ;;
+        claude|anthropic)      echo "anthropic" ;;
+        openrouter|or)         echo "openrouter" ;;
+        *)                     echo "$1" ;;
+    esac
+}
+
+# Process args: expand --provider shortcuts, detect bare URLs
+processed=()
+i=0
+while [[ $i -lt ${#args[@]} ]]; do
+    arg="${args[$i]}"
+    case "$arg" in
+        --provider)
+            i=$((i + 1))
+            if [[ $i -lt ${#args[@]} ]]; then
+                processed+=(--provider "$(provider_map "${args[$i]}")")
+            else
+                echo "Error: --provider requires a value"
+                exit 1
+            fi
+            ;;
+        http://*|https://*)
+            # Bare URL → convert to --url flag
+            processed+=(--url "$arg")
+            ;;
+        *)
+            processed+=("$arg")
+            ;;
+    esac
+    i=$((i + 1))
+done
+
+# Default provider if none specified
+has_provider=false
+for a in "${processed[@]+"${processed[@]}"}"; do
+    if [[ "$a" == "--provider" ]]; then
+        has_provider=true
+        break
+    fi
+done
+if ! $has_provider; then
+    processed=(--provider vllm_local "${processed[@]+"${processed[@]}"}")
+fi
+
+# ── Execute ──────────────────────────────────────────────────────────
+exec "$BINARY" test "${processed[@]+"${processed[@]}"}"

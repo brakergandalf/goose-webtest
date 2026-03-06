@@ -1,0 +1,25 @@
+[target]
+name = "Sparkasse Demo Online Banking"
+base_url = "https://www.sparkasse-hannover.de"
+description = "Sparkasse Hannover chipTAN demo banking environment"
+language = "de"
+
+[auth]
+type = "form"
+login_url = "https://www.sparkasse-hannover.de/de/home/login-online-banking/demo-online-banking-chiptan.html?n=true&stref=search&q=Demokonto&mdidianlass=&mdidiansprache="
+username_field = "input[name='anmeldename']"
+password_field = "input[name='pin']"
+submit_button = "button[type='submit']"
+username = "chipDEMO"
+password = "12345"
+dashboard_selector = ".finanzstatus"
+success_indicator = ".kontostand"
+
+[timeouts]
+page_load_ms = 15000
+element_wait_ms = 5000
+login_wait_ms = 10000
+
+[screenshots]
+viewport_width = 1280
+viewport_height = 720

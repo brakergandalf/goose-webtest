@@ -919,6 +919,55 @@ enum Command {
         #[arg(help = "Path to the bundled-extensions.json file")]
         file: PathBuf,
     },
+
+    /// Run web application tests using Playwright
+    #[cfg(feature = "webtest")]
+    #[command(about = "Run web application tests with AI-powered exploration")]
+    Test {
+        /// Target app configuration file (TOML)
+        #[arg(long, value_name = "PATH")]
+        target: Option<PathBuf>,
+
+        /// Direct URL to test (alternative to --target)
+        #[arg(long, value_name = "URL")]
+        url: Option<String>,
+
+        /// Natural language test specification (markdown)
+        #[arg(long, value_name = "PATH")]
+        spec: Option<PathBuf>,
+
+        /// Blueprint to execute (name without extension)
+        #[arg(long, value_name = "NAME")]
+        blueprint: Option<String>,
+
+        /// Report format: json, html, both
+        #[arg(long, default_value = "both")]
+        format: String,
+
+        /// Report output directory
+        #[arg(long, default_value = "reports")]
+        output_dir: PathBuf,
+
+        /// Only perform login, don't run tests
+        #[arg(long)]
+        login_only: bool,
+
+        /// CI mode: exit code 0=pass, 1=fail, 2=error
+        #[arg(long)]
+        ci: bool,
+
+        /// Run browser in visible mode (default: headless)
+        #[arg(long)]
+        headed: bool,
+
+        /// LLM provider for agentic nodes (e.g. anthropic, vllm_local, openrouter)
+        #[arg(long, value_name = "PROVIDER")]
+        provider: Option<String>,
+
+        /// Model name override (e.g. anthropic/claude-sonnet-4.6)
+        #[arg(long, value_name = "MODEL")]
+        model: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -1046,6 +1095,8 @@ fn get_command_name(command: &Option<Command>) -> &'static str {
         Some(Command::LocalModels { .. }) => "local-models",
         Some(Command::Completion { .. }) => "completion",
         Some(Command::ValidateExtensions { .. }) => "validate-extensions",
+        #[cfg(feature = "webtest")]
+        Some(Command::Test { .. }) => "webtest",
         None => "default_session",
     }
 }
@@ -1801,6 +1852,26 @@ pub async fn cli() -> anyhow::Result<()> {
                     std::process::exit(1);
                 }
             }
+        }
+        #[cfg(feature = "webtest")]
+        Some(Command::Test {
+            target,
+            url,
+            spec,
+            blueprint,
+            format,
+            output_dir,
+            login_only,
+            ci,
+            headed,
+            provider,
+            model,
+        }) => {
+            crate::commands::webtest::handle_test(
+                target, url, spec, blueprint, format, output_dir, login_only, ci, headed,
+                provider, model,
+            )
+            .await
         }
         None => handle_default_session().await,
     }

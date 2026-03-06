@@ -8,3 +8,5 @@ pub mod session;
 pub mod term;
 pub mod update;
 pub mod web;
+#[cfg(feature = "webtest")]
+pub mod webtest;

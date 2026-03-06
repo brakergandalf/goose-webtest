@@ -1,0 +1,73 @@
+version: "1.0"
+name: "login-test"
+description: "Authenticate to the target application and verify dashboard loads"
+
+settings:
+  max_retries: 2
+  timeout_seconds: 120
+  screenshot_on_every_step: true
+
+nodes:
+  - id: launch
+    type: deterministic
+    name: "Launch Browser"
+    action:
+      type: LaunchBrowser
+
+  - id: login
+    type: deterministic
+    name: "Perform Login"
+    action:
+      type: Login
+    timeout_seconds: 15
+
+  - id: screenshot_dashboard
+    type: deterministic
+    name: "Screenshot Dashboard"
+    action:
+      type: Screenshot
+      name: "01_dashboard_after_login"
+
+  - id: verify
+    type: agentic
+    name: "Verify Login Success"
+    prompt: |
+      Verify that login was successful:
+      1. Check that the dashboard or main page is visible
+      2. Verify the user greeting or account info is displayed
+      3. Ensure no error messages are shown
+      4. Look for key navigation elements (menu, sidebar)
+      5. Take a screenshot and log your findings
+    max_turns: 5
+    tools:
+      - "assert_visible"
+      - "assert_text"
+      - "log_step"
+      - "browser_snapshot"
+      - "browser_screenshot"
+
+  - id: report
+    type: deterministic
+    name: "Generate Report"
+    action:
+      type: GenerateReport
+
+transitions:
+  - from: launch
+    to: login
+    condition: OnSuccess
+  - from: launch
+    to: report
+    condition: OnFailure
+  - from: login
+    to: screenshot_dashboard
+    condition: OnSuccess
+  - from: login
+    to: report
+    condition: OnFailure
+  - from: screenshot_dashboard
+    to: verify
+    condition: Always
+  - from: verify
+    to: report
+    condition: Always
