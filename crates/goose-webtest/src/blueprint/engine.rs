@@ -206,6 +206,22 @@ impl BlueprintEngine {
         ctx
     }
 
+    /// Build app context header with target info so the LLM knows where it is.
+    fn build_app_context(&self) -> String {
+        let mut ctx = String::from("=== Application Under Test ===\n");
+        ctx.push_str(&format!("Name: {}\n", self.app_config.target.name));
+        ctx.push_str(&format!("Base URL: {}\n", self.app_config.target.base_url));
+        if self.app_config.requires_auth() {
+            ctx.push_str("Auth: Logged in (form-based authentication completed)\n");
+        }
+        if !self.app_config.target.language.is_empty() {
+            ctx.push_str(&format!("Language: {}\n", self.app_config.target.language));
+        }
+        ctx.push_str("IMPORTANT: You are already in the browser on the application. Use browser_snapshot to see the current page. Do NOT navigate to localhost or any other URL — stay on this application.\n");
+        ctx.push_str("=== End Application Context ===\n\n");
+        ctx
+    }
+
     /// Execute a single node, returning (detail_text, screenshots, assertions).
     async fn execute_node(
         &mut self,
@@ -224,15 +240,16 @@ impl BlueprintEngine {
                     .playwright()
                     .ok_or_else(|| anyhow!("Browser not launched — cannot run agentic node"))?;
 
-                // Build prompt: context from prior nodes + test spec + node prompt
+                // Build prompt: app context + prior node context + test spec + node prompt
+                let app_context = self.build_app_context();
                 let context_prefix = self.build_context_prefix();
                 let full_prompt = if let Some(ref spec) = self.test_spec {
                     format!(
-                        "{}{}\n\n--- Test Specification ---\n{}",
-                        context_prefix, prompt, spec.to_prompt()
+                        "{}{}{}\n\n--- Test Specification ---\n{}",
+                        app_context, context_prefix, prompt, spec.to_prompt()
                     )
                 } else {
-                    format!("{}{}", context_prefix, prompt)
+                    format!("{}{}{}", app_context, context_prefix, prompt)
                 };
 
                 let report_dir = self.report_dir.clone();

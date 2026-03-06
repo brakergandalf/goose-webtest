@@ -32,28 +32,58 @@ if [[ ${#args[@]} -gt 0 && "${args[0]}" == "run" ]]; then
     args=("${args[@]:1}")
 fi
 
-# Provider shortcut mapping
+# Provider shortcut mapping (also sets default model)
+resolved_provider=""
+resolved_model=""
+
 provider_map() {
     case "$1" in
-        local|vllm|vllm_local) echo "vllm_local" ;;
-        claude|anthropic)      echo "anthropic" ;;
-        openrouter|or)         echo "openrouter" ;;
-        *)                     echo "$1" ;;
+        local|vllm|vllm_local)
+            resolved_provider="vllm_local"
+            resolved_model="mlx-community/Qwen3.5-35B-A3B-4bit"
+            ;;
+        claude|anthropic)
+            resolved_provider="anthropic"
+            resolved_model="claude-sonnet-4-6"
+            ;;
+        openrouter|or)
+            resolved_provider="openrouter"
+            ;;
+        ollama)
+            resolved_provider="ollama"
+            ;;
+        *)
+            resolved_provider="$1"
+            ;;
     esac
 }
 
 # Process args: expand --provider shortcuts, detect bare URLs
 processed=()
+has_provider=false
+has_model=false
 i=0
 while [[ $i -lt ${#args[@]} ]]; do
     arg="${args[$i]}"
     case "$arg" in
         --provider)
+            has_provider=true
             i=$((i + 1))
             if [[ $i -lt ${#args[@]} ]]; then
-                processed+=(--provider "$(provider_map "${args[$i]}")")
+                provider_map "${args[$i]}"
+                processed+=(--provider "$resolved_provider")
             else
                 echo "Error: --provider requires a value"
+                exit 1
+            fi
+            ;;
+        --model)
+            has_model=true
+            i=$((i + 1))
+            if [[ $i -lt ${#args[@]} ]]; then
+                processed+=(--model "${args[$i]}")
+            else
+                echo "Error: --model requires a value"
                 exit 1
             fi
             ;;
@@ -69,16 +99,18 @@ while [[ $i -lt ${#args[@]} ]]; do
 done
 
 # Default provider if none specified
-has_provider=false
-for a in "${processed[@]+"${processed[@]}"}"; do
-    if [[ "$a" == "--provider" ]]; then
-        has_provider=true
-        break
-    fi
-done
 if ! $has_provider; then
-    processed=(--provider vllm_local "${processed[@]+"${processed[@]}"}")
+    provider_map "vllm_local"
+    processed=(--provider "$resolved_provider" "${processed[@]+"${processed[@]}"}")
 fi
+
+# Default model for the selected provider (if no --model given)
+if ! $has_model && [[ -n "$resolved_model" ]]; then
+    processed+=(--model "$resolved_model")
+fi
+
+# ── Logging ──────────────────────────────────────────────────────────
+export RUST_LOG="${RUST_LOG:-info}"
 
 # ── Execute ──────────────────────────────────────────────────────────
 exec "$BINARY" test "${processed[@]+"${processed[@]}"}"

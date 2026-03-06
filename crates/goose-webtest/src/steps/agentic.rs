@@ -467,8 +467,28 @@ async fn create_provider() -> Result<Arc<dyn Provider>> {
         provider_name, model_name
     );
 
-    let model_config =
-        ModelConfig::new(&model_name).map_err(|e| anyhow!("Invalid model config: {}", e))?;
+    // Max tokens: WEBTEST_MAX_TOKENS env, GOOSE_MAX_TOKENS env, or 16384 default
+    let max_tokens: i32 = std::env::var("WEBTEST_MAX_TOKENS")
+        .or_else(|_| std::env::var("GOOSE_MAX_TOKENS"))
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(16_384);
+
+    // Context limit: WEBTEST_CONTEXT_LIMIT env or 262144 (256k) default
+    let context_limit: usize = std::env::var("WEBTEST_CONTEXT_LIMIT")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(262_144);
+
+    info!(
+        "Model config: max_tokens={}, context_limit={}",
+        max_tokens, context_limit
+    );
+
+    let model_config = ModelConfig::new(&model_name)
+        .map_err(|e| anyhow!("Invalid model config: {}", e))?
+        .with_max_tokens(Some(max_tokens))
+        .with_context_limit(Some(context_limit));
 
     let provider = create(&provider_name, model_config, vec![])
         .await
