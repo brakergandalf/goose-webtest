@@ -73,6 +73,10 @@ pub async fn handle_test(
     if app_config.requires_auth() {
         println!("   Auth: form-based login");
     }
+    // Show resolved provider/model
+    let show_provider = std::env::var("WEBTEST_PROVIDER").unwrap_or_else(|_| "default".into());
+    let show_model = std::env::var("WEBTEST_MODEL").unwrap_or_else(|_| "default".into());
+    println!("   Provider: {} | Model: {}", show_provider, show_model);
     println!();
 
     // Load test spec if provided

@@ -79,6 +79,7 @@ pub async fn execute_agentic_full(
     let mut screenshots: Vec<String> = Vec::new();
     let mut assertions: Vec<Assertion> = Vec::new();
     let mut screenshot_counter: u32 = 0;
+    let mut tool_call_log: Vec<String> = Vec::new();
 
     // Build initial messages
     let model_config = provider.get_model_config();
@@ -90,12 +91,35 @@ pub async fn execute_agentic_full(
 
     // ReAct loop
     for turn in 0..max_turns {
-        info!("Agentic turn {}/{}", turn + 1, max_turns);
+        info!("── Agentic turn {}/{} ──", turn + 1, max_turns);
 
         let (response, _usage) = provider
             .complete(&model_config, session_id, system, &messages, &tools)
             .await
             .map_err(|e| anyhow!("LLM completion failed: {}", e))?;
+
+        // Extract any text content from this response (LLM thinking/narration)
+        let response_text: String = response
+            .content
+            .iter()
+            .filter_map(|c| {
+                if let MessageContent::Text(t) = c {
+                    Some(t.text.clone())
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+
+        if !response_text.is_empty() {
+            let preview = if response_text.len() > 150 {
+                format!("{}...", &response_text[..150])
+            } else {
+                response_text.clone()
+            };
+            info!("LLM text: {}", preview);
+        }
 
         // Check if response contains tool calls
         let tool_calls: Vec<_> = response
@@ -111,26 +135,40 @@ pub async fn execute_agentic_full(
             .collect();
 
         if tool_calls.is_empty() {
-            // No tool calls — LLM is done, extract final text
-            let final_text = response
-                .content
-                .iter()
-                .filter_map(|c| {
-                    if let MessageContent::Text(t) = c {
-                        Some(t.text.clone())
-                    } else {
-                        None
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join("\n");
-
-            info!("Agentic node completed after {} turns", turn + 1);
+            // No tool calls — LLM is done
+            let summary = format!(
+                "Completed after {} turns, {} tool calls, {} assertions, {} screenshots.\n\
+                 Tool call log:\n{}\n\n{}",
+                turn + 1,
+                tool_call_log.len(),
+                assertions.len(),
+                screenshots.len(),
+                tool_call_log.join("\n"),
+                response_text,
+            );
+            info!("Agentic node completed after {} turns ({} tool calls)", turn + 1, tool_call_log.len());
             return Ok(AgenticOutput {
-                text: final_text,
+                text: summary,
                 screenshots,
                 assertions,
             });
+        }
+
+        // Log tool calls
+        for req in &tool_calls {
+            if let Ok(call) = &req.tool_call {
+                let args_preview = call
+                    .arguments
+                    .as_ref()
+                    .map(|a| {
+                        let s = serde_json::to_string(a).unwrap_or_default();
+                        if s.len() > 80 { format!("{}...", &s[..80]) } else { s }
+                    })
+                    .unwrap_or_default();
+                let entry = format!("  [{}] {}({})", turn + 1, call.name, args_preview);
+                info!("{}", entry);
+                tool_call_log.push(entry);
+            }
         }
 
         // Add assistant response to conversation
@@ -239,10 +277,23 @@ pub async fn execute_agentic_full(
         messages.push(tool_message);
     }
 
-    Err(anyhow!(
-        "Agentic node exceeded max turns ({}) without completing",
-        max_turns
-    ))
+    // Max turns exceeded — return what we have instead of failing
+    let summary = format!(
+        "Reached max turns ({}) — still had pending tool calls.\n\
+         {} tool calls executed, {} assertions, {} screenshots.\n\
+         Tool call log:\n{}",
+        max_turns,
+        tool_call_log.len(),
+        assertions.len(),
+        screenshots.len(),
+        tool_call_log.join("\n"),
+    );
+    warn!("Agentic node hit max turns ({}) with {} tool calls done", max_turns, tool_call_log.len());
+    Ok(AgenticOutput {
+        text: summary,
+        screenshots,
+        assertions,
+    })
 }
 
 /// Handle a virtual tool call locally (not forwarded to Playwright).
