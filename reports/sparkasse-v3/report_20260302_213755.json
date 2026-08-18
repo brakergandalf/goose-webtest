@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "report_id": "a5fe942f-ffe4-4ec5-a92d-111960a00305",
+    "timestamp": "2026-03-02T21:37:55.079263Z",
+    "duration_seconds": 15.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "login-test",
+    "test_spec": null,
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass"
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1165,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Perform Login",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 14466,
+      "detail": "Login completed. Post-login snapshot: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html?n=true\n- Page Title: Finanzübersicht\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n    - button \"Zur Abmel",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "screenshot_dashboard",
+      "node_name": "Screenshot Dashboard",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 57,
+      "detail": "Screenshot saved: reports/sparkasse-v3/02_01_dashboard_after_login.png",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "verify",
+      "node_name": "Verify Login Success",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Agentic execution placeholder: Verify that login was successful:\n1. Check that th",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

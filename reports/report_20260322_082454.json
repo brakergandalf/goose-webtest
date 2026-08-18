@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "report_id": "4ee2fedc-a17c-43c7-93eb-499434141ef7",
+    "timestamp": "2026-03-22T08:24:54.254842Z",
+    "duration_seconds": 268.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "auto-discover",
+    "test_spec": null,
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass",
+    "assertions_total": 1,
+    "assertions_passed": 1,
+    "assertions_failed": 0
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1920,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 14721,
+      "detail": "Login completed. Post-login snapshot: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html?n=true\n- Page Title: Finanzübersicht\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n    - button \"Zur Abmel",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "discover",
+      "node_name": "Discover Application Structure",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 133899,
+      "detail": "Completed after 5 turns, 4 tool calls, 0 assertions, 0 screenshots.\nTool call log:\n  [1] browser_snapshot({})\n  [2] log_step({\"message\":\"Starting navigation exploration. Current page: Finanzübersicht (Fin...)\n  [3] browser_click({\"element\":\"Finanzplaner navigation link\",\"ref\":\"e32\"})\n  [4] browser_run_code({\"code\":\"async (page) => { await page.evaluate(() => window.scrollTo(0, 0)); }\"})\n\nNow let me try clicking on \"Finanzplaner\" again:",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "generate_and_execute",
+      "node_name": "Generate and Execute Tests",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 118065,
+      "detail": "Completed after 5 turns, 4 tool calls, 1 assertions, 1 screenshots.\nTool call log:\n  [1] browser_snapshot({})\n  [2] log_step({\"message\":\"TC-001: Verify Finanzübersicht page loads correctly with heading an...)\n  [3] assert_visible({\"text\":\"Finanzübersicht\"})\n  [4] log_step({\"message\":\"TC-002: Verify account information section is present with multiple ...)\n\n",
+      "screenshot_path": null,
+      "error": null,
+      "screenshots": [
+        "reports/evidence_001_assert_visible_Finanzübersicht.png"
+      ],
+      "assertions": [
+        {
+          "assertion_type": "visible",
+          "target": "Finanzübersicht",
+          "expected": "Text 'Finanzübersicht' visible on page",
+          "actual": "Found",
+          "passed": true,
+          "screenshot_path": "reports/evidence_001_assert_visible_Finanzübersicht.png"
+        }
+      ]
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "report_id": "ae450283-e665-41ca-86e8-0a957c1c674a",
+    "timestamp": "2026-03-03T11:51:28.428163Z",
+    "duration_seconds": 34.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "login-test",
+    "test_spec": null,
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass"
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1661,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Perform Login",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 14546,
+      "detail": "Login completed. Post-login snapshot: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html?n=true\n- Page Title: Finanzübersicht\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n    - button \"Zur Abmel",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "screenshot_dashboard",
+      "node_name": "Screenshot Dashboard",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 58,
+      "detail": "Screenshot saved: reports/test-run-04/02_01_dashboard_after_login.png",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "verify",
+      "node_name": "Verify Login Success",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 17927,
+      "detail": "## ✅ Login Verification Report — Sparkasse Hannover Online Banking\n\nBased on the screenshot and full accessibility snapshot, here is a comprehensive verification of all 5 checks:\n\n---\n\n### ✅ 1. Dashboard / Main Page Visible\n- **PASS** — The page is loaded at:\n  `https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html`\n- The **\"Finanzübersicht\"** (Financial Overview) dashboard is fully rendered and accessible.\n\n---\n\n### ✅ 2. User Greeting / Account Info Displayed\n- **PASS** — A personalized greeting is clearly visible:\n  > **\"Guten Tag Max Mustermann\"**\n  > *\"Ihre Sparkasse Hannover heißt Sie willkommen.\"*\n- Multiple accounts are shown under the user's name (e.g., *Privatgirokonto*, *Firmenkonto*, *Depot*, etc.)\n- **Total net worth displayed:** `684.839,96 EUR`\n\n---\n\n### ✅ 3. No Error Messages Shown\n- **PASS** — No error messages or alerts are present.\n- There is a notification about **\"Offene Aufträge\"** (open orders awaiting approval) and **\"1 weiterer Hinweis\"** (1 additional notice) — these are **informational notifications**, not errors.\n\n---\n\n### ✅ 4. Key Navigation Elements Present\n- **PASS** — The following navigation elements are confirmed:\n\n| Element | Status |\n|---|---|\n| 🔴 Sparkasse \"Online-Banking\" logo/home link | ✅ Present |\n| 🔍 Search button | ✅ Present |\n| 🔔 Messages / Nachrichten | ✅ Present |\n| 👤 Profil und Einstellungen | ✅ Present |\n| 📋 Main nav: Finanzübersicht, Finanzplaner | ✅ Present |\n| 🏦 Tabs: Privat / Geschäftlich | ✅ Present |\n| 💳 Quick action: Überweisung (+) | ✅ Present |\n| ⭐ Favoriten menu | ✅ Present |\n| 🚪 Abmelden (Logout) button | ✅ Present |\n| 📄 Footer: AGB, Datenschutz, Impressum, Kontakt | ✅ Present |\n\n---\n\n### ✅ 5. Screenshot Captured\n- **PASS** — Screenshot saved as `login-verification.png` *(displayed above)*\n\n---\n\n## 🏆 Overall Result: **ALL CHECKS PASSED**\n\n> The login was **successful**. The user **Max Mustermann** is authenticated and has full access to the Sparkasse Hannover Online Banking dashboard with complete account overview, navigation, and no errors.",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

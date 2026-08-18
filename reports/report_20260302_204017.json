@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "report_id": "523e1c89-e7d4-4a16-bc17-4e83bb192e61",
+    "timestamp": "2026-03-02T20:40:17.541813Z",
+    "duration_seconds": 0.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "explore-and-report",
+    "test_spec": "Sparkasse Demo - Basic Tests",
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass"
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Browser launched",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Login completed",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "explore",
+      "node_name": "Explore Application",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Agentic execution placeholder: You are now logged into the application. Explore t",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "execute_tests",
+      "node_name": "Execute Test Specification",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Agentic execution placeholder: Now execute the test scenarios from the specificat",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

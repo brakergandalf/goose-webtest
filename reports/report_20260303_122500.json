@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "report_id": "2c4fffc3-3e8e-49d9-84ca-8f757c3ed5f1",
+    "timestamp": "2026-03-03T12:25:00.264756Z",
+    "duration_seconds": 17.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "explore-and-report",
+    "test_spec": "Sparkasse Demo - Basic Tests",
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 6,
+    "passed": 2,
+    "failed": 4,
+    "errors": 0,
+    "skipped": 0,
+    "result": "partial"
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1895,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Fail",
+      "duration_ms": 4726,
+      "detail": null,
+      "screenshot_path": null,
+      "error": "Could not find username field. Snapshot excerpt: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/login-online-banking/demo-online-banking-chiptan.html?n=true&stref=search&q=Demokonto&mdidianlass=&mdidiansprache=\n- Page Title: Demo Online-Banking chipTAN\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n    - button \"Zur Abmeldung\" [ref=e7]\n  - text:  \n  - generic [ref=e9]:\n    - link \"Zur Startseite\" [ref=e11] [cursor=pointer]:\n      "
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Fail",
+      "duration_ms": 3468,
+      "detail": null,
+      "screenshot_path": null,
+      "error": "Could not find username field. Snapshot excerpt: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/login-online-banking/demo-online-banking-chiptan.html?n=true&stref=search&q=Demokonto&mdidianlass=&mdidiansprache=\n- Page Title: Demo Online-Banking chipTAN\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n  - text:  \n  - generic [ref=e8]:\n    - link \"Zur Startseite\" [ref=e10] [cursor=pointer]:\n      - /url: /de/home.html?n=true&stref=log"
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Fail",
+      "duration_ms": 3478,
+      "detail": null,
+      "screenshot_path": null,
+      "error": "Could not find username field. Snapshot excerpt: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/login-online-banking/demo-online-banking-chiptan.html?n=true&stref=search&q=Demokonto&mdidianlass=&mdidiansprache=\n- Page Title: Demo Online-Banking chipTAN\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n  - text:  \n  - generic [ref=e8]:\n    - link \"Zur Startseite\" [ref=e10] [cursor=pointer]:\n      - /url: /de/home.html?n=true&stref=log"
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Fail",
+      "duration_ms": 3445,
+      "detail": null,
+      "screenshot_path": null,
+      "error": "Could not find username field. Snapshot excerpt: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/login-online-banking/demo-online-banking-chiptan.html?n=true&stref=search&q=Demokonto&mdidianlass=&mdidiansprache=\n- Page Title: Demo Online-Banking chipTAN\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n  - text:  \n  - generic [ref=e8]:\n    - link \"Zur Startseite\" [ref=e10] [cursor=pointer]:\n      - /url: /de/home.html?n=true&stref=log"
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "report_id": "bc410795-d052-4c1a-8ba2-854da5c192c8",
+    "timestamp": "2026-03-07T16:45:07.488287Z",
+    "duration_seconds": 873.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "auto-discover",
+    "test_spec": null,
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass",
+    "assertions_total": 5,
+    "assertions_passed": 5,
+    "assertions_failed": 0
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1957,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Authenticate",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 14378,
+      "detail": "Login completed. Post-login snapshot: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html?n=true\n- Page Title: Finanzübersicht\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n    - button \"Zur Abmel",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "discover",
+      "node_name": "Discover Application Structure",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 93308,
+      "detail": "Completed after 4 turns, 3 tool calls, 0 assertions, 0 screenshots.\nTool call log:\n  [1] browser_snapshot({})\n  [2] browser_click({\"element\":\"Finanzplaner navigation link\",\"ref\":\"e31\"})\n  [3] browser_run_code({\"code\":\"async (page) => { await page.evaluate(() => window.scrollTo(0, 500)); }...)\n\nNow let me try clicking on \"Finanzplaner\" [ref=e31]:",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "generate_and_execute",
+      "node_name": "Generate and Execute Tests",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 764044,
+      "detail": "Completed after 13 turns, 19 tool calls, 5 assertions, 6 screenshots.\nTool call log:\n  [1] browser_snapshot({})\n  [2] log_step({\"message\":\"TC-001: Verify Finanzübersicht page loads correctly with heading an...)\n  [2] assert_visible({\"text\":\"Finanzübersicht\"})\n  [2] assert_visible({\"text\":\"Kontenübersicht\"})\n  [2] assert_visible({\"text\":\"Geldanlage\"})\n  [2] assert_visible({\"text\":\"Depot\"})\n  [2] assert_visible({\"text\":\"Vermögenswerte\"})\n  [2] browser_take_screenshot({\"filename\":\"tc-001-finanzuebersicht.png\",\"type\":\"png\"})\n  [2] log_step({\"message\":\"TC-001: RESULT - All main sections visible on Finanzübersicht page\"...)\n  [3] log_step({\"message\":\"TC-002: Navigate to Finanzplaner page and verify it loads correctly\"...)\n  [4] browser_click({\"element\":\"Finanzplaner navigation link\",\"ref\":\"e31\"})\n  [5] browser_run_code({\"code\":\"async (page) => { await page.evaluate(() => window.scrollTo(0, 300)); }...)\n  [6] browser_click({\"element\":\"Finanzplaner navigation link\",\"ref\":\"e31\"})\n  [7] browser_run_code({\"code\":\"async (page) => { await page.locator('[aria-ref=\\\"e31\\\"]').click(); }\"})\n  [8] browser_evaluate({\"function\":\"() => { const element = document.querySelector('[aria-ref=\\\"e31\\\"]'...)\n  [9] browser_navigate({\"url\":\"https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht...)\n  [10] browser_navigate({\"url\":\"https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht...)\n  [11] log_step({\"message\":\"TC-001: Verify Finanzübersicht page loads correctly with heading an...)\n  [12] log_step({\"message\":\"TC-002: Navigate to Finanzplaner page and verify it loads correctly ...)\n\n## Test Summary\n\n### Test Results\n\n| Test ID | Description | Status |\n|---------|-------------|--------|\n| TC-001 | Verify Finanzübersicht page loads correctly with heading and main content | **PASS** |\n| TC-002 | Navigate to Finanzplaner page and verify it loads correctly | **FAIL** (session timeout) |\n\n### Detailed Findings\n\n**TC-001: Finanzübersicht Page Verification - PASS**\n- Successfully verified the Finanzübersicht (Financial Overview) page loads correctly\n- Confirmed presence of key sections:\n  - \"Finanzübersicht\" heading\n  - \"Kontenübersicht\" (Account Overview) section\n  - \"Geldanlage\" (Investments) section\n  - \"Depot\" (Portfolio) section\n  - \"Vermögenswerte\" (Assets) section\n- Verified account listings with balances are displayed\n- Confirmed chart visualization for account balance forecast is present\n\n**TC-002: Finanzplaner Navigation - FAIL**\n- Attempted to navigate to the Finanzplaner page\n- **Issue:** Session timed out during the test execution\n- The application logged the user out and redirected to the login page\n- Unable to complete navigation test due to session expiration\n\n### Application Analysis\n\n**Sparkasse Hannover Online Banking** is a German online banking application with:\n- Comprehensive account overview with multiple account types (checking, savings, investment, credit cards)\n- Financial planning tools (Finanzplaner)\n- Multi-currency support (EUR, USD)\n- Rich navigation with hierarchical menus\n- Responsive design with accessibility features\n\n### Recommendations\n\n1. **Session Management:** The application has a relatively short session timeout. Tests should be completed within the session duration or implement session refresh mechanisms.\n\n2. **Navigation Testing:** Consider testing navigation to Finanzplaner immediately after login before session timeout occurs.\n\n3. **Content Validation:** The Finanzübersicht page displays comprehensive financial information including:\n   - Multiple account types with balances\n   - Account balance forecast charts\n   - Investment portfolios\n   - Credit information\n\n### Final Count\n- **Passed:** 1\n- **Failed:** 1\n- **Total Tests:** 2",
+      "screenshot_path": null,
+      "error": null,
+      "screenshots": [
+        "reports/evidence_001_assert_visible_Finanzübersicht.png",
+        "reports/evidence_002_assert_visible_Kontenübersicht.png",
+        "reports/evidence_003_assert_visible_Geldanlage.png",
+        "reports/evidence_004_assert_visible_Depot.png",
+        "reports/evidence_005_assert_visible_Vermögenswerte.png",
+        "reports/agentic_006.png"
+      ],
+      "assertions": [
+        {
+          "assertion_type": "visible",
+          "target": "Finanzübersicht",
+          "expected": "Text 'Finanzübersicht' visible on page",
+          "actual": "Found",
+          "passed": true,
+          "screenshot_path": "reports/evidence_001_assert_visible_Finanzübersicht.png"
+        },
+        {
+          "assertion_type": "visible",
+          "target": "Kontenübersicht",
+          "expected": "Text 'Kontenübersicht' visible on page",
+          "actual": "Found",
+          "passed": true,
+          "screenshot_path": "reports/evidence_002_assert_visible_Kontenübersicht.png"
+        },
+        {
+          "assertion_type": "visible",
+          "target": "Geldanlage",
+          "expected": "Text 'Geldanlage' visible on page",
+          "actual": "Found",
+          "passed": true,
+          "screenshot_path": "reports/evidence_003_assert_visible_Geldanlage.png"
+        },
+        {
+          "assertion_type": "visible",
+          "target": "Depot",
+          "expected": "Text 'Depot' visible on page",
+          "actual": "Found",
+          "passed": true,
+          "screenshot_path": "reports/evidence_004_assert_visible_Depot.png"
+        },
+        {
+          "assertion_type": "visible",
+          "target": "Vermögenswerte",
+          "expected": "Text 'Vermögenswerte' visible on page",
+          "actual": "Found",
+          "passed": true,
+          "screenshot_path": "reports/evidence_005_assert_visible_Vermögenswerte.png"
+        }
+      ]
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

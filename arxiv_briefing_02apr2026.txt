@@ -1,0 +1,28 @@
+arXiv Briefing — 02.04.2026
+
+1. MemFactory: Vereinheitlichtes Framework für Agenten-Gedächtnis
+   Entwickelt ein End-to-End-Framework zur Optimierung von Memory-augmented LLMs mit Reinforcement Learning. Erreicht 21x kürzeres Training und 17x schnellere Inferenz.
+   Relevant für: goose-webtest mit Langzeitgedächtnis, CoPaw-ReMe Memory Bridge, autonome Agenten
+   https://arxiv.org/abs/2603.29493
+
+2. PolarQuant: Optimal Gaussian Weight Quantization via Hadamard Rotation
+   Neuartige Quantisierungsmethode durch Hadamard-Rotation für near-lossless Kompression. Ermöglicht 2-4bit Quantisierung mit minimalem Qualitätsverlust.
+   Relevant für: TurboQuant, MLX-4bit-Modelle, lokale LLM-Inferenz auf Apple Silicon
+   https://arxiv.org/abs/2603.29078
+
+3. Human-Like Lifelong Memory: Neuroscience-Gedächtnis für unendliche Interaktion
+   Bio-inspirierte Gedächtnisarchitektur mit emotionalen Valenz-Vektoren und System-1/System-2-Abholung. Ideal für persistente Agenten-Gedächtnisse.
+   Relevant für: CoPaw Memory, autonomy-mlx Agenten, Langzeit-Interaktionsframeworks
+   https://arxiv.org/abs/2603.29023
+
+4. OptiMer: Verteilungsvektor-Merging für Continual Pre-Training
+   Entkopplung von Datenmischungsverhältnis und Training durch post-hoc Bayesian Optimization auf 15-35x niedrigeren Suchkosten.
+   Relevant für: Model Fine-Tuning, adaptive Model-Adaption, Data Mixing Strategies
+   https://arxiv.org/abs/2603.28858
+
+5. Owl-AuraID 1.0: Autonomes System zur wissenschaftlichen Instrumentierung
+   Software-Hardware-System das proprietäre GUIs automatisiert bedient - adaptiv in Minuten ohne vorheriges Training.
+   Relevant für: autonome Coding-Agents, Tool-Use-Orchestration, Multi-Agent-Systeme
+   https://arxiv.org/abs/2603.29828
+
+(710 Papers gesammelt aus 4 RSS-Feeds, 15 Kandidaten gescost, 5 Top ausgewählt)

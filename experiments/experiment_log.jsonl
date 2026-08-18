@@ -1,0 +1,1 @@
+{"iteration":1,"timestamp":"2026-03-22T09:27:32+01:00","hypothesis":"Add explicit minimum assertion targets and structured test checklist to generate_and_execute prompt","focus":"prompts","score":1.000,"baseline":1.000,"kept":false,"reason":"coverage_decreased_8_to_1","changed_files":"blueprints/auto-discover.yaml","provider":"local"}

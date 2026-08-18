@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "report_id": "2c33fcf9-db42-48c3-bff6-6709451924a0",
+    "timestamp": "2026-03-03T11:46:44.471061Z",
+    "duration_seconds": 41.0,
+    "target_name": "Sparkasse Demo Online Banking",
+    "blueprint_name": "login-test",
+    "test_spec": null,
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass"
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1834,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Perform Login",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 14873,
+      "detail": "Login completed. Post-login snapshot: ### Page\n- Page URL: https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html?n=true\n- Page Title: Finanzübersicht\n### Snapshot\n```yaml\n- generic [ref=e2]:\n  - navigation [ref=e4]:\n    - button \"Zum Hauptinhalt\" [ref=e5]\n    - button \"Zur Suche\" [ref=e6]\n    - button \"Zur Abmel",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "screenshot_dashboard",
+      "node_name": "Screenshot Dashboard",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 66,
+      "detail": "Screenshot saved: reports/test-run-03/02_01_dashboard_after_login.png",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "verify",
+      "node_name": "Verify Login Success",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 24503,
+      "detail": "Based on my analysis of the current page state, here are my findings regarding the login verification:\n\n## Login Verification Results\n\n### ✅ **PASS** - Dashboard/Main Page is Visible\n- **Status**: Successfully logged in\n- **Evidence**: The page displays \"Finanzübersicht\" (Financial Overview) which is the main dashboard\n- **URL**: `https://www.sparkasse-hannover.de/de/home/onlinebanking/finanzuebersicht.html?n=true`\n\n### ✅ **PASS** - User Greeting/Account Info is Displayed\n- **Status**: User identification confirmed\n- **Evidence**: Clear user greeting visible: \"Guten Tag Max Mustermann\" (Good day Max Mustermann)\n- **Additional Info**: \"Ihre Sparkasse Hannover heißt Sie willkommen\" (Your Sparkasse Hannover welcomes you)\n\n### ✅ **PASS** - No Error Messages Shown\n- **Status**: No login errors detected\n- **Evidence**: No error messages or failed login indicators are visible on the page\n- **Note**: There are some informational notices like \"Offene Aufträge\" (Open Orders) but these are normal account notifications, not errors\n\n### ✅ **PASS** - Key Navigation Elements Present\n- **Status**: Full navigation structure available\n- **Evidence**: Complete navigation menu visible including:\n  - Main navigation with \"Finanzübersicht\" (Financial Overview)\n  - \"Finanzplaner\" (Financial Planner)\n  - \"Nachrichten\" (Messages)\n  - \"Profil und Einstellungen\" (Profile and Settings)\n  - \"Hilfe und Kontakt\" (Help and Contact)\n  - Logout button \"Abmelden\"\n\n### ✅ **PASS** - Account Data Fully Loaded\n- **Status**: Complete financial overview displayed\n- **Evidence**: Comprehensive account information showing:\n  - Multiple accounts (Konten und Karten: 23.825,53 EUR)\n  - Investment accounts (Geldanlage: 52.000,00 EUR)\n  - Securities portfolio (Depot: 145.550,80 EUR)\n  - Credits and financing (Kredite: -36.613,93 EUR)\n  - Assets (Vermögenswerte: 510.000,00 EUR)\n  - **Total portfolio value**: 684.839,96 EUR\n\n## Summary\n\n**✅ LOGIN VERIFICATION: SUCCESSFUL**\n\nAll verification criteria have been met:\n1. ✅ Dashboard is fully visible and functional\n2. ✅ User is properly identified with personalized greeting\n3. ✅ No error messages present\n4. ✅ Complete navigation menu available\n5. ✅ Full account data loaded and displayed\n\nThe user \"Max Mustermann\" has successfully logged into the Sparkasse Hannover online banking system and has access to their complete financial overview with a total portfolio value of 684.839,96 EUR across multiple account types.",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

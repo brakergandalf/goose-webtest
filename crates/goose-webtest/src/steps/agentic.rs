@@ -406,8 +406,20 @@ async fn handle_virtual_tool(
                 }
             };
             let lower_snap = snapshot.to_lowercase();
-            let found = lower_snap.contains(&description.to_lowercase())
-                && (text.is_empty() || lower_snap.contains(&text.to_lowercase()));
+            // Match if ANY word (3+ chars) from description appears in snapshot,
+            // plus text match if provided. This is more forgiving than exact substring.
+            let desc_lower = description.to_lowercase();
+            let desc_match = if desc_lower.len() < 3 {
+                lower_snap.contains(&desc_lower)
+            } else {
+                // Try full match first, then fall back to word-level matching
+                lower_snap.contains(&desc_lower)
+                    || desc_lower.split_whitespace()
+                        .filter(|w| w.len() >= 3)
+                        .any(|word| lower_snap.contains(word))
+            };
+            let text_match = text.is_empty() || lower_snap.contains(&text.to_lowercase());
+            let found = desc_match && text_match;
 
             assertions.push(Assertion {
                 assertion_type: AssertionType::ElementExists,

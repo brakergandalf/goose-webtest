@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "report_id": "7fa008a9-ff42-40e6-83ae-a6f67d52ee11",
+    "timestamp": "2026-03-02T21:09:46.912954Z",
+    "duration_seconds": 1.0,
+    "target_name": "https://example.com",
+    "blueprint_name": "login-test",
+    "test_spec": null,
+    "agent_version": "1.26.0"
+  },
+  "summary": {
+    "total_steps": 5,
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "pass"
+  },
+  "steps": [
+    {
+      "node_id": "launch",
+      "node_name": "Launch Browser",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1231,
+      "detail": "Browser launched via Playwright MCP",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "login",
+      "node_name": "Perform Login",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "No auth required, skipping login",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "screenshot_dashboard",
+      "node_name": "Screenshot Dashboard",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 1,
+      "detail": "Screenshot skipped: Tool 'browser_screenshot' returned error: ### Error\nTool \"browser_screenshot\" not found",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "verify",
+      "node_name": "Verify Login Success",
+      "node_type": "Agentic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Agentic execution placeholder: Verify that login was successful:\n1. Check that th",
+      "screenshot_path": null,
+      "error": null
+    },
+    {
+      "node_id": "report",
+      "node_name": "Generate Report",
+      "node_type": "Deterministic",
+      "status": "Pass",
+      "duration_ms": 0,
+      "detail": "Report generation delegated to engine",
+      "screenshot_path": null,
+      "error": null
+    }
+  ]
+}

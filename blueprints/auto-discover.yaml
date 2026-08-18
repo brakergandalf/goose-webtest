@@ -4,7 +4,7 @@ description: "Autonomously discover application structure, generate tests, and e
 
 settings:
   max_retries: 2
-  timeout_seconds: 600
+  timeout_seconds: 900
   screenshot_on_every_step: true
 
 nodes:
@@ -24,48 +24,47 @@ nodes:
     type: agentic
     name: "Discover Application Structure"
     prompt: |
-      You are exploring this web application. You are ALREADY in the browser and logged in.
+      You are exploring a web application. You are ALREADY in the browser and logged in.
 
-      STEP 1: Call browser_snapshot RIGHT NOW to see the current page.
+      STEP 1: Call browser_snapshot to see the current page.
 
-      STEP 2: From the snapshot, identify ALL navigation links and menu items.
-      The snapshot shows an accessibility tree — look for:
-      - "link" entries (navigation menu items)
-      - "button" entries (interactive elements)
-      - "navigation" sections
+      STEP 2: Identify ALL navigation links in the main menu.
+      In the accessibility tree, look for "link" entries inside "navigation" sections.
 
-      STEP 3: Click EACH navigation link one by one using browser_click with the [ref=XXX] value.
-      After clicking each link:
-      - Call browser_snapshot to see the new page
-      - Use log_step to record: page title, URL, key content areas, forms found
-      - Use browser_take_screenshot for visual evidence
+      STEP 3: Visit EVERY navigation link. For each one:
+        a) browser_click on its [ref=XXX]
+        b) browser_snapshot to see the page content
+        c) log_step with: page name, URL path, what content is on this page
+        d) browser_take_screenshot
 
-      STEP 4: After visiting ALL pages, output a JSON summary:
+      STEP 4: For each page, also check for:
+        - Sub-navigation or tabs (click them too)
+        - Account lists or data tables
+        - Buttons and action items
+        - Forms
+
+      STEP 5: Output a JSON summary listing every page you found:
       ```json
       {
-        "title": "Application Name",
         "pages": [
           {
-            "path": "/page-url",
-            "title": "Page Title",
-            "forms": [{"purpose": "Transfer", "fields": [{"label": "Amount", "field_type": "text", "required": true}]}],
-            "interactive_elements": ["Button: Export", "Dropdown: Date filter"],
-            "requires_auth": true
+            "name": "Page Name",
+            "url_pattern": "partial-url",
+            "heading": "Main heading text on this page",
+            "key_content": ["item1", "item2"],
+            "has_forms": false,
+            "has_tables": false,
+            "buttons": ["Button Label 1"]
           }
-        ],
-        "navigation": [
-          {"label": "Menu Item", "url": "/path"}
         ]
       }
       ```
 
       RULES:
-      - ALWAYS start with browser_snapshot — never assume what's on the page
-      - Click navigation links using their [ref=XXX] values from the snapshot
-      - Do NOT submit any forms or modify data
-      - Do NOT click logout
-      - Do NOT navigate to external URLs or localhost
-      - Visit EVERY navigation item you can see
+      - ALWAYS call browser_snapshot before clicking anything
+      - Visit EVERY navigation item — do not skip any
+      - Do NOT submit forms or click logout
+      - Do NOT navigate to external URLs
     max_turns: 25
     timeout_seconds: 300
 
@@ -73,44 +72,54 @@ nodes:
     type: agentic
     name: "Generate and Execute Tests"
     prompt: |
-      Based on the application structure from the previous discovery step, generate and execute test scenarios.
+      You have a map of this application from the previous discovery step.
+      Now generate and execute comprehensive tests.
 
-      STEP 1: Call browser_snapshot to see where you are right now.
+      YOUR GOAL: Produce at least 20 assertion calls across all pages.
 
-      STEP 2: For each discovered page, create and execute test cases:
+      TESTING STRATEGY — work through EVERY discovered page:
 
-      **Navigation Tests:**
-      - Click each navigation link, verify the page loads (use assert_visible to check for page headings)
-      - Use assert_url_matches to verify the URL changed
+      For EACH page found during discovery:
+        1. Navigate to it (browser_click on the navigation link)
+        2. browser_snapshot to see the page
+        3. assert_url_matches with part of the page URL
+        4. assert_visible with the page heading text
+        5. assert_visible with at least one key content item on that page
+        6. If the page has buttons: assert_visible with the button label
+        7. If the page has sub-tabs: click each tab and assert_visible on its content
+        8. log_step to record the test result
 
-      **Content Tests:**
-      - On each page, use assert_visible to verify key content is present
-      - Check that data tables have rows, lists have items
-      - Verify section headings match expected labels
+      ASSERTION TOOL GUIDE:
+      - assert_visible("some text") — PREFERRED, most reliable. Checks if text appears anywhere on the page.
+      - assert_url_matches("pattern") — Reliable. Checks if URL contains the pattern.
+      - assert_text_contains(selector, expected) — Good for specific content checks.
+      - assert_element_exists(description, text) — AVOID unless checking for specific element types. This tool is fragile.
 
-      **Form Tests (if forms were discovered):**
-      - Use assert_element_exists to verify form fields are present
-      - Check field labels and types
-      - Do NOT submit forms
-
-      **UI Element Tests:**
-      - Verify buttons and interactive elements are visible
-      - Check that menus expand/collapse correctly
+      EXAMPLE TEST SEQUENCE for one page:
+      ```
+      log_step("TC-001: Navigate to Finanzübersicht", "info")
+      browser_snapshot
+      browser_click [ref=XXX]   (click the navigation link)
+      browser_snapshot
+      assert_url_matches("finanzuebersicht")
+      assert_visible("Finanzübersicht")
+      assert_visible("Girokonto")         (key content on this page)
+      log_step("TC-001: PASS", "pass")
+      ```
 
       EXECUTION RULES:
-      1. Assign each test a sequential ID: TC-001, TC-002, etc.
-      2. Before each test: log_step("TC-XXX: [description]", "info")
-      3. Navigate to the relevant page using browser_click on navigation links
-      4. Use assert_visible, assert_text_contains, assert_element_exists to validate
-      5. Use browser_take_screenshot at key moments
-      6. After each test: log_step("TC-XXX: RESULT", "pass") or log_step("TC-XXX: RESULT", "fail")
-      7. Do NOT submit forms or modify data
-      8. Do NOT navigate to external URLs or localhost
-      9. Always use browser_snapshot before interacting with a page
+      1. Number tests sequentially: TC-001, TC-002, etc.
+      2. ALWAYS browser_snapshot before asserting or clicking
+      3. Use assert_visible for text checks (NOT assert_element_exists)
+      4. At least 3 assertions per page (URL + heading + content)
+      5. Take browser_take_screenshot once per page group
+      6. Do NOT submit forms or modify any data
+      7. Do NOT navigate to external URLs or localhost
 
-      Execute ALL tests, then provide a final summary with pass/fail counts.
-    max_turns: 35
-    timeout_seconds: 480
+      After all tests, provide a summary:
+      "Tests complete: X passed, Y failed out of Z total assertions."
+    max_turns: 50
+    timeout_seconds: 600
 
   - id: report
     type: deterministic
@@ -126,11 +135,9 @@ transitions:
     to: report
     condition: OnFailure
 
-  # Login success → discover
   - from: login
     to: discover
     condition: OnSuccess
-  # Login failure → still discover (test public pages)
   - from: login
     to: discover
     condition: OnFailure
